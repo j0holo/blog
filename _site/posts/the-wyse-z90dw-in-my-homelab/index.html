@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="The Wyse Z90DW in my homelab" />
+    <title>The Wyse Z90DW in my homelab</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>The Wyse Z90DW in my homelab</h1>
+      <div class="content"><p>A couple of years ago I bought four Wyse Z90DW thin clients for €17 a piece from a small computer store. I was looking for silent computers that I could use to do some clustering projects with.</p>
+<p>Lets take a look at some pictures of this beauty.</p>
+<p><img src="../../assets/images/front.jpeg" alt="Front of the Wyze Z90DW"></p>
+<p>As you can see we have a power button which contains a blue LED to indicate the power status. Audio in and out complemented with two usb  2.0 ports.</p>
+<p><img src="../../assets/images/side-view.jpeg" alt="Side of the Wyze Z90DW"></p>
+<p>This thin client is passively cooled so there is ventilation on all sides to radiate the heat away from the APU.</p>
+<p><img src="../../assets/images/side-vesa.jpeg" alt="Other side of the Wyze Z90DW"></p>
+<p>The other side view. Nothing to note here except the VESA mount.</p>
+<p><img src="../../assets/images/back.jpeg" alt="Rear of the Wyze Z90DW"></p>
+<p>The rear view shows the rest of the ports.</p>
+<p>From top to bottom:</p>
+<ul>
+<li>Two blacks studs where other versions have WiFi antenna</li>
+<li>DVI-I port</li>
+<li>Displayport</li>
+<li>2 USB 2.0</li>
+<li>2 USB 3.0</li>
+<li>Gigabit ethernet (via a Realtek chip) with PXE boot support</li>
+<li>19V input for power (I got various laptop adapters that work)</li>
+<li>Kensington lock</li>
+<li>On the side a information card with MAC address, model number and Windows XP Embbeded license key</li>
+</ul>
+<p><img src="../../assets/images/internals-sata-view.jpeg" alt="Inside of the Wyze Z90DW"></p>
+<p>Finally the internals of this thin client.</p>
+<p>I made some upgrades, but the original specs are:</p>
+<ul>
+<li>AMD G-T56N @ 1.65 GHz</li>
+<li>AMD Radeon HD 6310</li>
+<li>2GB of RAM @ 1066MT/s</li>
+<li>Apacer 2GB flash sata storage that fits in the sata data/power slot</li>
+</ul>
+<p>The ram has been upgraded to two 4GB Kingston dimms at 1333 MT/s and the storage with a Crucial MX500 250GB SSD.</p>
+<p>Lets face it, this is not a fast CPU at all. <a href="https://www.cpubenchmark.net/cpu.php?cpu=AMD+G-T56N">According to PassMark</a> this CPU scored 481 points. <a href="https://www.cpubenchmark.net/compare/AMD-G-T56N-vs-Intel-Core2-Duo-E7300/268vs945">A Intel Core2Duo E7300 is twice as fast</a>, ouch. But at an 18W TDP I think it still has value in a homelab that is placed throughout an apartment.</p>
+<p>Elasticsearch with a 4 node cluster is actually not a problem with small daily log ingestion of other systems. H264 decode hardware acceleration is nice, but I don't know if it works on Linux.</p>
+<p>AMD-V support, it has it, but why bother with two slow cores. AES-NI? forget it.</p>
+<p>Debian, FreeBSD and OpenBSD all work just fine. Hint, the BIOS is always password protected and defaults to: Fireport as password.</p>
+<p>My upcomming project is to put them to work in a <a href="https://min.io/">Minio</a> object storage cluster for Parquet formatted data.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+  </body>
+</html>

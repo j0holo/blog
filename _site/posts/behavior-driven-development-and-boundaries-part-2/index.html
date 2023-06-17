@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Behavior Driven Development and boundaries part 2" />
+    <title>Behavior Driven Development and boundaries part 2</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>Behavior Driven Development and boundaries part 2</h1>
+      <div class="content"><p>Lets see how effective testing at boundaries really is in terms of covering our code. I recommend reading <a href="/posts/behavior-driven-development-and-boundaries/">part 1 of this series</a> first if you haven't done so already.</p>
+<p>I created a <a href="https://github.com/j0holo/testing-boundaries">GitHub repository</a> with a small HTTP API that adds new subscribers to a database. There is also a worker that reads emails from a queue and writes them to a <a href="https://pkg.go.dev/io#Writer">io.Writer</a>. An io.Writer is an interface that is automatically implemented if a struct  has the method <code>Write(p []byte) (int, error)</code>. In the future we can use this interface to write to S3 storage and mock it during our tests. Which we have done in this case.</p>
+<p>Note that we only have tests that run against the <code>jsonHandler</code> endpoint and tests that put messages in the queue for the worker. These are our boundaries.</p>
+<table>
+<thead>
+<tr>
+<th>filename</th>
+<th>coverage %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>business.go</td>
+<td>92.3%</td>
+</tr>
+<tr>
+<td>database.go</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>main.go</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>routes.go</td>
+<td>78.1%</td>
+</tr>
+<tr>
+<td>worker.go</td>
+<td>85.7%</td>
+</tr>
+</tbody>
+</table>
+<p>Look at our test coverage, 92.3% and 100% coverage on files we never tested directly. We can send more messages on queues or do more validation for our input and our old tests would still pass as long as the new code doesn't change our current tested behavior. Adding a <code>created_at</code> field to our <code>subscribers</code> table? It doesn't change our tests, because it doesn't change the behavior.</p>
+<p>If it does the behavior does change, it is a sign that the behavior of the API changes. Do we want that? If yes, update the test. If no, update the code to make the tests pass.</p>
+<p>See the <a href="https://github.com/j0holo/testing-boundaries/tree/add-created_at-column">add-created_at-column branch</a> to see that I added a <code>created_at</code> column to the <code>subscribers</code> table and updated the business logic. All tests pass without any changes.</p>
+<p>The more tests we add, the more rigid our API becomes. Especially for public APIs this can be a good thing. You will probably release a new API version for your customers if you make any API changes.</p>
+<p>For internal APIs it means a lot more tests break if you change the behavior of your API. A signal that you are changing the contract other application depend on. If other applications are also changing this is not a problem. Our if your protocol supports backwards compatibility like gRPC it may also not be a problem.</p>
+<p>Something to keep an eye on and balance. I think it is better to go overboard with tests and back off then have a pile of complex code with only one or two tests.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+  </body>
+</html>

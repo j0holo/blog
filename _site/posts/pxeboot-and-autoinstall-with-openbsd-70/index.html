@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="pxeboot and autoinstall with OpenBSD 7.0" />
+    <title>pxeboot and autoinstall with OpenBSD 7.0</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>pxeboot and autoinstall with OpenBSD 7.0</h1>
+      <div class="content"><p>This is a post about notes I gatherd to get pxeboot and autoinstall working on OpenBSD 7.0. I already got it working earlier on version 6.9, but forgot to write it down somewhere.</p>
+<p>It is almost to simple once you know which man pages to read and what is and isn't important.</p>
+<p>You will need the following man-pages:</p>
+<ul>
+<li><a href="https://man.openbsd.org/pxeboot.8">https://man.openbsd.org/pxeboot.8</a></li>
+<li><a href="https://man.openbsd.org/dhcpd.8">https://man.openbsd.org/dhcpd.8</a></li>
+<li><a href="https://man.openbsd.org/dhcpd.conf.5">https://man.openbsd.org/dhcpd.conf.5</a></li>
+<li><a href="https://man.openbsd.org/dhcp-options.5">https://man.openbsd.org/dhcp-options.5</a></li>
+<li><a href="https://man.openbsd.org/tftpd.8">https://man.openbsd.org/tftpd.8</a></li>
+<li><a href="https://man.openbsd.org/httpd.8">https://man.openbsd.org/httpd.8</a></li>
+<li><a href="https://man.openbsd.org/httpd.conf.5">https://man.openbsd.org/httpd.conf.5</a></li>
+<li><a href="https://man.openbsd.org/man8/disklabel.8">https://man.openbsd.org/man8/disklabel.8</a></li>
+<li><a href="https://man.openbsd.org/autoinstall.8">https://man.openbsd.org/autoinstall.8</a></li>
+</ul>
+<h2>Configuration</h2>
+<p>First we will set up a dhcpd service to point systems booting with PXE to the right tftp server. The dhcpd.conf also allows you to already set the hostname of the system. Or you can do it later in the install.conf file to configure it via the autoinstall.</p>
+<pre class="language-text"><code class="language-text">option  domain-name "your.domain";<br>option  domain-name-servers 192.168.1.2;<br><br>subnet 192.168.1.0 netmask 255.255.255.0 {<br>  option routers 192.168.1.1;<br>  option broadcast-address 192.168.1.255;<br>  range 192.168.1.150 192.168.1.200;<br><br>  # an ip here is also okay<br>  next-server pxe.your.domain;<br>  filename "auto_install";<br><br>  host wyze1 {<br>    hardware ethernet 00:80:64:9D:BC:FD;<br>    fixed-address 192.168.1.10;<br>    option host-name "host.your.domain";<br>  }<br>}</code></pre>
+<p>After that we will set up the tftpd service to boot our system.</p>
+<p>I created a new directory <code>/var/tftp</code> owned by the <code>_tftpd</code> user, which tftpd uses by default.</p>
+<p>You will need to download the following files from an <a href="https://cdn.openbsd.org/pub/OpenBSD/7.0/amd64/">OpenBSD mirror</a>:</p>
+<ul>
+<li>pxeboot - used by PXE to bootstrap the system to download the bsd.rd</li>
+<li>bsd.rd - installer  with ramdisk kernel</li>
+<li>A symoblic symlink named auto_install that points to pxeboot</li>
+<li>A /var/tftp/etc/boot.conf with the contents: bsd.rd</li>
+</ul>
+<p>My tftpd settings:</p>
+<pre class="language-text"><code class="language-text">$ rcctl get tftpd<br>tftpd_class=daemon<br>tftpd_flags=-v -4 /var/tftp/<br>tftpd_logger=<br>tftpd_rtable=0<br>tftpd_timeout=30<br>tftpd_user=root</code></pre>
+<p>Now that the tftpd service is running we can focus on the httpd service which will provide us with the install.conf and installation files needed for an automated install. We can also use httpd to host our own OpenBSD package mirror, but this is optional.</p>
+<pre class="language-text"><code class="language-text">chroot "/var/www"<br><br>server "pxe.your.domain" {<br>	listen on * port 80<br>	root "/openbsd"<br>}</code></pre>
+<p><em>/etc/httpd.conf</em></p>
+<p>You can put your install.conf and disklabel file in <code>/var/www/openbsd/</code> and the autoinstall will automatically pick it up if you boot via PXE.</p>
+<p>My files look like this:</p>
+<pre class="language-text"><code class="language-text">Which network interface do you wish to configure = re0 <br>IPv4 address for vio0 = dhcp<br>IPv6 address for vio0 = none<br>Which network interface do you wish to configure = done<br>Start sshd(8) by default = yes<br>Do you expect to run the X Window System = no<br>Setup a user = server<br>Full name for user server = server<br>Password for root = <hash pw for root><br>Password for user server = <hash pw for server user><br>Public ssh key for root account = <ssh pub key><br>Public ssh key for user server = <ssh pub key><br>Allow root ssh login = prohibit-password<br>What timezone are you in = Europe/Amsterdam<br>Which disk is the root disk = sd0<br>Use (W)hole disk MBR, whole disk (G)PT, (O)penBSD area or (E)dit = G<br>An EFI/GPT disk may not boot. Proceed = yes<br>URL to autopartitioning template for disklabel = http://nuc.dest.lan/disklabel<br>Location of sets = http<br>HTTP proxy URL = none<br>HTTP Server = server.your.domain<br>Server directory = pub/OpenBSD/7.0/amd64<br>Unable to connect using https. Use http instead = yes<br>Set name(s) = -x* -game*</code></pre>
+<p>I have weird systems that refuse to boot via MBR. The HTTP server can point to a remote mirror or to a local mirror if you have one.</p>
+<p>Creating a local mirror is easy, but takes a while:</p>
+<ul>
+<li>Create the same directory structure as the mirror</li>
+<li>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/patches/7.0/common/*'</li>
+<li>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/7.0/amd64/*'</li>
+<li>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/7.0/packages/amd64/*'</li>
+<li>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/7.0/packages-stable/amd64/*'</li>
+<li>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/syspatch/7.0/amd64/*'</li>
+</ul>
+<p>So in my case it the directory for the base system will be <code>mkdir -p  /var/www/openbsd/pub/OpenBSD/7.0/amd64</code>, enter it and run <code>ftp 'ftp://ftp.nluug.nl/pub/OpenBSD/7.0/amd64/'</code>. You can support multiple architectures by replacing the amd64 with <code>uname -p</code>.</p>
+<p>You could run this in a cron job to get the latest syspatches and updated packages.</p>
+<p>Now you should have a working environment for PXE booting machines/VMs.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+  </body>
+</html>

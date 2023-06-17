@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="The bright future of embedded databases" />
+    <title>The bright future of embedded databases</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>The bright future of embedded databases</h1>
+      <div class="content"><p>Personally I think that embedded databases have a bright future ahead. Let me explain.</p>
+<p>Client-server databases are dominating the current database landscape. Self-hosted, managed (AWS RDS, GCP Cloud SQL) or DBaaS (Snowflake) are popular. No doubt about it.</p>
+<p>Managed databases or DBaaS are expensive but offer a tradeoff for smaller companies to have a reliable database with backups and recovery included without the need of having a dedicated employee for database management.</p>
+<p>The thing is, embedded databases are easy to manage. SQLite with it's .backup command or <a href="https://litestream.io/">Litestream</a> can do live backups and is easy to recover.</p>
+<p>The thing is that embedded databases are most of the time one file and with the right support provided by the database backups become trivial (with the right tooling/API). Most companies don't have a lot of data, 10-100 GB.</p>
+<p>With the rise of Intel Optane and large CPU caches the benefit pushes more and more to embedded databases. Yes, networks get faster and Intel Silicon Photonics looks promising providing over 1.6 Tbps. But I don't think networks will be faster then memory and caches. Those network bits and bytes still need to be stored somewhere waiting to be processed by the CPU/GPU.</p>
+<p>When you can get 128 CPU cores with terabytes of RAM you can handle a LOT of requests. Expensify already <a href="https://blog.expensify.com/2018/01/08/scaling-sqlite-to-4m-qps-on-a-single-server/">showed in 2018</a> that with some solid hardware and minor tweaks to SQLite that 4 million queries per second is possible with SQLite.</p>
+<p>Postgresql and MariaDB will still get plenty of use, but embedded databases will be seen as a solid alternative for many applications in the future.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+  </body>
+</html>
