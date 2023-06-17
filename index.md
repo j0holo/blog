@@ -1,8 +1,8 @@
 ---
 layout: homepage.liquid
-title: Horsin' Around
+title: Joholo's blog
 ---
 
-# Welcome to Hollywoo
+# Joholo's blog
 
-Hello. I am BoJack. Horseman, obviously
+Go, TDD, BDD, and more
