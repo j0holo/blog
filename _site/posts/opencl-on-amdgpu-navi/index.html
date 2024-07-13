@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="OpenCL on AMD (amdgpu) Navi cards" />
+    <title>OpenCL on AMD (amdgpu) Navi cards</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>OpenCL on AMD (amdgpu) Navi cards</h1>
+      <div class="content"><p>Oh man this took way to much effort and research. Hopefully this will help others in the future.</p>
+<p>OpenCL applications were crashing for general GPGPU workloads, 3D rendering worked fine.</p>
+<p>What doesn't work:</p>
+<ul>
+<li>ROCm</li>
+<li>mesa-libOpenCL (Clover implementation)</li>
+<li>Outdated recommendations about AMDGPU-Pro drivers, etc.</li>
+</ul>
+<p>What does work: <strong>mesa-libOpenCL (rusticl implementation)</strong></p>
+<p>So what do you need to install on Fedora 40:</p>
+<ul>
+<li>mesa-libOpenCL</li>
+<li>mesa-libOpenCL-devel</li>
+<li>clinfo</li>
+<li>opencl-filesystem</li>
+<li>opencl-headers</li>
+<li>ocl-icd</li>
+<li>ocl-icd-devel</li>
+<li>libclc</li>
+<li>libclc-devel</li>
+</ul>
+<p>The default Clover mesa OpenCL implementation will crash the card:</p>
+<pre><code>[  395.075440] amdgpu 0000:0b:00.0: amdgpu: [gfxhub] page fault (src_id:0 ring:24 vmid:7 pasid:32775)
+[  395.075449] amdgpu 0000:0b:00.0: amdgpu:  in process genefer22g_linu pid 13116 thread genefer22g:cs0 pid 13118
+[  395.075454] amdgpu 0000:0b:00.0: amdgpu:   in page starting at address 0x0000000000000000 from client 0x1b (UTCL2)
+[  395.075458] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00701431
+[  395.075462] amdgpu 0000:0b:00.0: amdgpu: 	 Faulty UTCL2 client ID: SQC (data) (0xa)
+[  395.075465] amdgpu 0000:0b:00.0: amdgpu: 	 MORE_FAULTS: 0x1
+[  395.075468] amdgpu 0000:0b:00.0: amdgpu: 	 WALKER_ERROR: 0x0
+[  395.075471] amdgpu 0000:0b:00.0: amdgpu: 	 PERMISSION_FAULTS: 0x3
+[  395.075473] amdgpu 0000:0b:00.0: amdgpu: 	 MAPPING_ERROR: 0x0
+[  395.075476] amdgpu 0000:0b:00.0: amdgpu: 	 RW: 0x0
+[  395.075483] amdgpu 0000:0b:00.0: amdgpu: [gfxhub] page fault (src_id:0 ring:24 vmid:7 pasid:32775)
+[  395.075488] amdgpu 0000:0b:00.0: amdgpu:  in process genefer22g_linu pid 13116 thread genefer22g:cs0 pid 13118
+[  395.075492] amdgpu 0000:0b:00.0: amdgpu:   in page starting at address 0x0000000000000000 from client 0x1b (UTCL2)
+[  395.075495] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00000000
+...
+</code></pre>
+<p>You need to use the <code>rusticl</code> implementation.</p>
+<pre><code>export OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
+export RUSTICL_ENABLE=radeonsi
+</code></pre>
+<p>When running <code>clinfo</code> you will now only see a single platform instead of two.</p>
+<p>An OpenCL benchmark like <a href="https://github.com/ProjectPhysX/OpenCL-Benchmark">ProjectPhysX/OpenCL-Benchmark</a> will no longer trigger a reset for the GPU.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+  </body>
+</html>

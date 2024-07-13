@@ -4,7 +4,7 @@
   <subtitle>A minimal blog template using eleventy</subtitle>
   <link href="https://eleventy-blog-mnml.netlify.app" rel="self"/>
   <link href="https://eleventy-blog-mnml.netlify.app"/>
-  <updated>2024-05-29T00:00:00Z</updated>
+  <updated>2024-07-13T00:00:00Z</updated>
   <id>https://eleventy-blog-mnml.netlify.app</id>
   <author>
     <name>Arpit Batra</name>
@@ -385,6 +385,60 @@ This is a trade-off I&#39;m willing to make right now. But always keep that in m
 &lt;p&gt;Keep it in the back of your mind: can I precompute this? If yes: Is it worth it in speed and readability?&lt;/p&gt;
 
         &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: Space-time trade-off&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
+      </content>
+    </entry>
+    
+    <entry>
+      <title>OpenCL on AMD (amdgpu) Navi cards</title>
+      <link href="https://eleventy-blog-mnml.netlify.app/posts/opencl-on-amdgpu-navi/"/>
+      <updated>2024-07-13T00:00:00Z</updated>
+      <id>https://eleventy-blog-mnml.netlify.app/posts/opencl-on-amdgpu-navi/</id>
+      <content type="html">&lt;p&gt;Oh man this took way to much effort and research. Hopefully this will help others in the future.&lt;/p&gt;
+&lt;p&gt;OpenCL applications were crashing for general GPGPU workloads, 3D rendering worked fine.&lt;/p&gt;
+&lt;p&gt;What doesn&#39;t work:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ROCm&lt;/li&gt;
+&lt;li&gt;mesa-libOpenCL (Clover implementation)&lt;/li&gt;
+&lt;li&gt;Outdated recommendations about AMDGPU-Pro drivers, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What does work: &lt;strong&gt;mesa-libOpenCL (rusticl implementation)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;So what do you need to install on Fedora 40:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mesa-libOpenCL&lt;/li&gt;
+&lt;li&gt;mesa-libOpenCL-devel&lt;/li&gt;
+&lt;li&gt;clinfo&lt;/li&gt;
+&lt;li&gt;opencl-filesystem&lt;/li&gt;
+&lt;li&gt;opencl-headers&lt;/li&gt;
+&lt;li&gt;ocl-icd&lt;/li&gt;
+&lt;li&gt;ocl-icd-devel&lt;/li&gt;
+&lt;li&gt;libclc&lt;/li&gt;
+&lt;li&gt;libclc-devel&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The default Clover mesa OpenCL implementation will crash the card:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[  395.075440] amdgpu 0000:0b:00.0: amdgpu: [gfxhub] page fault (src_id:0 ring:24 vmid:7 pasid:32775)
+[  395.075449] amdgpu 0000:0b:00.0: amdgpu:  in process genefer22g_linu pid 13116 thread genefer22g:cs0 pid 13118
+[  395.075454] amdgpu 0000:0b:00.0: amdgpu:   in page starting at address 0x0000000000000000 from client 0x1b (UTCL2)
+[  395.075458] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00701431
+[  395.075462] amdgpu 0000:0b:00.0: amdgpu: 	 Faulty UTCL2 client ID: SQC (data) (0xa)
+[  395.075465] amdgpu 0000:0b:00.0: amdgpu: 	 MORE_FAULTS: 0x1
+[  395.075468] amdgpu 0000:0b:00.0: amdgpu: 	 WALKER_ERROR: 0x0
+[  395.075471] amdgpu 0000:0b:00.0: amdgpu: 	 PERMISSION_FAULTS: 0x3
+[  395.075473] amdgpu 0000:0b:00.0: amdgpu: 	 MAPPING_ERROR: 0x0
+[  395.075476] amdgpu 0000:0b:00.0: amdgpu: 	 RW: 0x0
+[  395.075483] amdgpu 0000:0b:00.0: amdgpu: [gfxhub] page fault (src_id:0 ring:24 vmid:7 pasid:32775)
+[  395.075488] amdgpu 0000:0b:00.0: amdgpu:  in process genefer22g_linu pid 13116 thread genefer22g:cs0 pid 13118
+[  395.075492] amdgpu 0000:0b:00.0: amdgpu:   in page starting at address 0x0000000000000000 from client 0x1b (UTCL2)
+[  395.075495] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00000000
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You need to use the &lt;code&gt;rusticl&lt;/code&gt; implementation.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;export OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
+export RUSTICL_ENABLE=radeonsi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When running &lt;code&gt;clinfo&lt;/code&gt; you will now only see a single platform instead of two.&lt;/p&gt;
+&lt;p&gt;An OpenCL benchmark like &lt;a href=&quot;https://github.com/ProjectPhysX/OpenCL-Benchmark&quot;&gt;ProjectPhysX/OpenCL-Benchmark&lt;/a&gt; will no longer trigger a reset for the GPU.&lt;/p&gt;
+
+        &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: OpenCL on AMD (amdgpu) Navi cards&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
       </content>
     </entry>
 </feed>
