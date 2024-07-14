@@ -393,7 +393,7 @@ This is a trade-off I&#39;m willing to make right now. But always keep that in m
       <link href="https://eleventy-blog-mnml.netlify.app/posts/opencl-on-amdgpu-navi/"/>
       <updated>2024-07-13T00:00:00Z</updated>
       <id>https://eleventy-blog-mnml.netlify.app/posts/opencl-on-amdgpu-navi/</id>
-      <content type="html">&lt;p&gt;Oh man this took way to much effort and research. Hopefully this will help others in the future.&lt;/p&gt;
+      <content type="html">&lt;p&gt;Oh man this took way too much effort and research. Hopefully this will help others in the future.&lt;/p&gt;
 &lt;p&gt;OpenCL applications were crashing for general GPGPU workloads, 3D rendering worked fine.&lt;/p&gt;
 &lt;p&gt;What doesn&#39;t work:&lt;/p&gt;
 &lt;ul&gt;
@@ -431,12 +431,33 @@ This is a trade-off I&#39;m willing to make right now. But always keep that in m
 [  395.075495] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00000000
 ...
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You need to use the &lt;code&gt;rusticl&lt;/code&gt; implementation.&lt;/p&gt;
+&lt;p&gt;You need to use the &lt;code&gt;rusticl&lt;/code&gt; implementation of the mesa-libOpenCL package.&lt;/p&gt;
+&lt;p&gt;Enable it via the following commands.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;export OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
 export RUSTICL_ENABLE=radeonsi
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;When running &lt;code&gt;clinfo&lt;/code&gt; you will now only see a single platform instead of two.&lt;/p&gt;
 &lt;p&gt;An OpenCL benchmark like &lt;a href=&quot;https://github.com/ProjectPhysX/OpenCL-Benchmark&quot;&gt;ProjectPhysX/OpenCL-Benchmark&lt;/a&gt; will no longer trigger a reset for the GPU.&lt;/p&gt;
+&lt;p&gt;List of installed versions related to OpenCL on my AMD Radeon RX 6600:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mesa-dri-drivers.x86_64                              24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-filesystem.x86_64                               24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libEGL.x86_64                                   24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libGL.x86_64                                    24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libGLU.x86_64                                   9.0.3-4.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libOpenCL.x86_64                                24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libOpenCL-devel.x86_64                          24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libgbm.x86_64                                   24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-libglapi.x86_64                                 24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-va-drivers.x86_64                               24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;mesa-vulkan-drivers.x86_64                           24.1.2-7.fc40&lt;/li&gt;
+&lt;li&gt;opencl-filesystem.noarch                             1.0-20.fc40&lt;/li&gt;
+&lt;li&gt;opencl-headers.noarch                                3.0-29.20240412git8275634.fc40&lt;/li&gt;
+&lt;li&gt;ocl-icd.x86_64                                       2.3.2-6.fc40&lt;/li&gt;
+&lt;li&gt;ocl-icd-devel.x86_64                                 2.3.2-6.fc40&lt;/li&gt;
+&lt;li&gt;libclc.x86_64                                        18.1.6-1.fc40&lt;/li&gt;
+&lt;li&gt;libclc-devel.x86_64                                  18.1.6-1.fc40&lt;/li&gt;
+&lt;/ul&gt;
 
         &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: OpenCL on AMD (amdgpu) Navi cards&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
       </content>

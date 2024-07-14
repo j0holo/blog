@@ -3,7 +3,7 @@ date: '2024-07-13'
 title: OpenCL on AMD (amdgpu) Navi cards
 ---
 
-Oh man this took way to much effort and research. Hopefully this will help others in the future.
+Oh man this took way too much effort and research. Hopefully this will help others in the future.
 
 OpenCL applications were crashing for general GPGPU workloads, 3D rendering worked fine.
 
@@ -48,7 +48,9 @@ The default Clover mesa OpenCL implementation will crash the card:
 ...
 ```
 
-You need to use the `rusticl` implementation.
+You need to use the `rusticl` implementation of the mesa-libOpenCL package.
+
+Enable it via the following commands.
 
 ```
 export OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
@@ -58,3 +60,23 @@ export RUSTICL_ENABLE=radeonsi
 When running `clinfo` you will now only see a single platform instead of two.
 
 An OpenCL benchmark like [ProjectPhysX/OpenCL-Benchmark](https://github.com/ProjectPhysX/OpenCL-Benchmark) will no longer trigger a reset for the GPU.
+
+List of installed versions related to OpenCL on my AMD Radeon RX 6600:
+
+- mesa-dri-drivers.x86_64                              24.1.2-7.fc40
+- mesa-filesystem.x86_64                               24.1.2-7.fc40
+- mesa-libEGL.x86_64                                   24.1.2-7.fc40
+- mesa-libGL.x86_64                                    24.1.2-7.fc40
+- mesa-libGLU.x86_64                                   9.0.3-4.fc40
+- mesa-libOpenCL.x86_64                                24.1.2-7.fc40
+- mesa-libOpenCL-devel.x86_64                          24.1.2-7.fc40
+- mesa-libgbm.x86_64                                   24.1.2-7.fc40
+- mesa-libglapi.x86_64                                 24.1.2-7.fc40
+- mesa-va-drivers.x86_64                               24.1.2-7.fc40
+- mesa-vulkan-drivers.x86_64                           24.1.2-7.fc40
+- opencl-filesystem.noarch                             1.0-20.fc40
+- opencl-headers.noarch                                3.0-29.20240412git8275634.fc40
+- ocl-icd.x86_64                                       2.3.2-6.fc40
+- ocl-icd-devel.x86_64                                 2.3.2-6.fc40
+- libclc.x86_64                                        18.1.6-1.fc40
+- libclc-devel.x86_64                                  18.1.6-1.fc40

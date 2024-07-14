@@ -15,7 +15,7 @@
         <a href="/">← Back</a>
       </div>
       <h1>OpenCL on AMD (amdgpu) Navi cards</h1>
-      <div class="content"><p>Oh man this took way to much effort and research. Hopefully this will help others in the future.</p>
+      <div class="content"><p>Oh man this took way too much effort and research. Hopefully this will help others in the future.</p>
 <p>OpenCL applications were crashing for general GPGPU workloads, 3D rendering worked fine.</p>
 <p>What doesn't work:</p>
 <ul>
@@ -53,12 +53,33 @@
 [  395.075495] amdgpu 0000:0b:00.0: amdgpu: GCVM_L2_PROTECTION_FAULT_STATUS:0x00000000
 ...
 </code></pre>
-<p>You need to use the <code>rusticl</code> implementation.</p>
+<p>You need to use the <code>rusticl</code> implementation of the mesa-libOpenCL package.</p>
+<p>Enable it via the following commands.</p>
 <pre><code>export OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
 export RUSTICL_ENABLE=radeonsi
 </code></pre>
 <p>When running <code>clinfo</code> you will now only see a single platform instead of two.</p>
 <p>An OpenCL benchmark like <a href="https://github.com/ProjectPhysX/OpenCL-Benchmark">ProjectPhysX/OpenCL-Benchmark</a> will no longer trigger a reset for the GPU.</p>
+<p>List of installed versions related to OpenCL on my AMD Radeon RX 6600:</p>
+<ul>
+<li>mesa-dri-drivers.x86_64                              24.1.2-7.fc40</li>
+<li>mesa-filesystem.x86_64                               24.1.2-7.fc40</li>
+<li>mesa-libEGL.x86_64                                   24.1.2-7.fc40</li>
+<li>mesa-libGL.x86_64                                    24.1.2-7.fc40</li>
+<li>mesa-libGLU.x86_64                                   9.0.3-4.fc40</li>
+<li>mesa-libOpenCL.x86_64                                24.1.2-7.fc40</li>
+<li>mesa-libOpenCL-devel.x86_64                          24.1.2-7.fc40</li>
+<li>mesa-libgbm.x86_64                                   24.1.2-7.fc40</li>
+<li>mesa-libglapi.x86_64                                 24.1.2-7.fc40</li>
+<li>mesa-va-drivers.x86_64                               24.1.2-7.fc40</li>
+<li>mesa-vulkan-drivers.x86_64                           24.1.2-7.fc40</li>
+<li>opencl-filesystem.noarch                             1.0-20.fc40</li>
+<li>opencl-headers.noarch                                3.0-29.20240412git8275634.fc40</li>
+<li>ocl-icd.x86_64                                       2.3.2-6.fc40</li>
+<li>ocl-icd-devel.x86_64                                 2.3.2-6.fc40</li>
+<li>libclc.x86_64                                        18.1.6-1.fc40</li>
+<li>libclc-devel.x86_64                                  18.1.6-1.fc40</li>
+</ul>
 </div>
       <div class="back-link">
         <a href="/">← Back</a>
