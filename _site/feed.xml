@@ -4,7 +4,7 @@
   <subtitle>A minimal blog template using eleventy</subtitle>
   <link href="https://eleventy-blog-mnml.netlify.app" rel="self"/>
   <link href="https://eleventy-blog-mnml.netlify.app"/>
-  <updated>2024-07-13T00:00:00Z</updated>
+  <updated>2024-08-21T00:00:00Z</updated>
   <id>https://eleventy-blog-mnml.netlify.app</id>
   <author>
     <name>Arpit Batra</name>
@@ -460,6 +460,25 @@ export RUSTICL_ENABLE=radeonsi
 &lt;/ul&gt;
 
         &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: OpenCL on AMD (amdgpu) Navi cards&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
+      </content>
+    </entry>
+    
+    <entry>
+      <title>Go and Unix beauty</title>
+      <link href="https://eleventy-blog-mnml.netlify.app/posts/go-and-unix-beauty/"/>
+      <updated>2024-08-21T00:00:00Z</updated>
+      <id>https://eleventy-blog-mnml.netlify.app/posts/go-and-unix-beauty/</id>
+      <content type="html">&lt;p&gt;I enjoy programming in Go, but recently I was doing some frontend programming.&lt;/p&gt;
+&lt;p&gt;NPM has all these &lt;code&gt;watch&lt;/code&gt; command that automatically rerun tasks when files are updated.&lt;/p&gt;
+&lt;p&gt;Neat, has Go something like that without installing some binary?&lt;/p&gt;
+&lt;p&gt;No, but Go&#39;s CLI does work nice with the Unix philosophy.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;watch go test ./...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Every five seconds your tests of packages that have been changed will be tested.&lt;/p&gt;
+&lt;p&gt;So no wasted resources, no extra tooling required!&lt;/p&gt;
+&lt;p&gt;Just a need little trick.&lt;/p&gt;
+
+        &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: Go and Unix beauty&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
       </content>
     </entry>
 </feed>
