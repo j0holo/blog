@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Storing enums in a database" />
+    <title>Storing enums in a database</title>
+    <link rel="stylesheet" href="../../styles/blogpost.css" />
+    <link rel="alternate" href="/feed.xml" type="application/atom+xml" title="Arpit Batra" />
+  </head>
+  <body>
+    <div class="container post-container">
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+      <h1>Storing enums in a database</h1>
+      <div class="content"><p><em>This is a bit of a ramble about data-oriented design and enum storage in databases.</em></p>
+<p><em>I see that there is a relation between data-oriented design and high performance<br>
+web application, but I have difficulty expressing it.</em></p>
+<p>When working with Hibernate, Eloquent and other ORMs I often see that enums are<br>
+stored as their string representation instead of a smaller value like an integer.</p>
+<p>Comming back to the ideas data-oriented design which focusses on batching large<br>
+arrays of data that fits well into the CPU caches.</p>
+<p>Storing strings instead of integers is not cache friendly at all.</p>
+<p>I was thinking how I could apply this to my own work. I don't work on game engines,<br>
+high performance software. Instead I am a web developer, a <em>common</em> software engineering job.</p>
+<p>Web frameworks like Spring, Django and Laravel and even the Go http server standard<br>
+library do a lot of work for you already.</p>
+<p>Parsing the HTTP request, sending the response. We only start to have control over<br>
+our data in the handler or controller method.</p>
+<p>What do we in a handler:</p>
+<ul>
+<li>valdiate and parse the input if any</li>
+<li>query the database based on the input</li>
+<li>return a response</li>
+</ul>
+<p>Often the validation is on a small set of data.</p>
+<ul>
+<li>Is the uploaded file really a PDF?</li>
+<li>Is the name of the product within 250 characters?</li>
+<li>Is the set date in the future?</li>
+</ul>
+<p>The response is often filling a HTML template or returning JSON. Protobuf and other<br>
+more performant JSON replacements are rarely used in my experience. Often handled<br>
+by the framework. Returning a class that is transformed into JSON.</p>
+<p>So that leaves us with the bulk of the data, the database. Obvious I know.<br>
+So if this is our space to apply data-oriented design?</p>
+<p>I do think it is!</p>
+<p>To see if this is indeed the place to think about keeping our data representation<br>
+compact and thus cache friendly.</p>
+<h2>Benchmark</h2>
+<p>After writing some <a href="https://github.com/j0holo/sqlite-benchmark">benchmark code</a> I can maybe draw some conclusions.</p>
+<p>Each table has 15 million rows, where the fk and int table share the same dataset.</p>
+<ul>
+<li>enum_as_string: 626 MB</li>
+<li>enum_as_fk: 396 MB</li>
+<li>enum_as_int: 396 MB</li>
+</ul>
+<p>MySQL and Postgres can both have enum types that can be used for this purpose.<br>
+The point of this test is to see the impact of storing enums as strings.</p>
+<p>My system:</p>
+<ul>
+<li>CPU: AMD Ryzen 5800X3D</li>
+<li>Memory: 32GB of DDR4 at 2666MT/s</li>
+<li>Storage: Crucial MX500 2TB</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Mean (ms)</th>
+<th>Median (ms)</th>
+<th>StdDev (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum_as_string_color</td>
+<td>0.751</td>
+<td>0.734</td>
+<td>0.063</td>
+</tr>
+<tr>
+<td>enum_as_fk_color</td>
+<td>0.789</td>
+<td>0.788</td>
+<td>0.012</td>
+</tr>
+<tr>
+<td>enum_as_int_color</td>
+<td>0.650</td>
+<td>0.628</td>
+<td>0.058</td>
+</tr>
+<tr>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+</tr>
+<tr>
+<td>enum_as_string_color_in</td>
+<td>0.742</td>
+<td>0.733</td>
+<td>0.028</td>
+</tr>
+<tr>
+<td>enum_as_fk_color_in</td>
+<td>0.798</td>
+<td>0.784</td>
+<td>0.051</td>
+</tr>
+<tr>
+<td>enum_as_int_color_in</td>
+<td>0.643</td>
+<td>0.634</td>
+<td>0.040</td>
+</tr>
+<tr>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+</tr>
+<tr>
+<td>enum_as_string_color_and_status</td>
+<td>0.845</td>
+<td>0.791</td>
+<td>0.098</td>
+</tr>
+<tr>
+<td>enum_as_fk_color_and_status</td>
+<td>1.029</td>
+<td>1.007</td>
+<td>0.107</td>
+</tr>
+<tr>
+<td>enum_as_int_color_and_status</td>
+<td>1.216</td>
+<td>1.214</td>
+<td>0.021</td>
+</tr>
+<tr>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+</tr>
+<tr>
+<td>enum_as_string_color_and_status_and_order_type</td>
+<td>1.577</td>
+<td>1.497</td>
+<td>0.251</td>
+</tr>
+<tr>
+<td>enum_as_fk_color_and_status_and_order_type</td>
+<td>1.305</td>
+<td>1.221</td>
+<td>0.244</td>
+</tr>
+<tr>
+<td>enum_as_int_color_and_status_and_order_type</td>
+<td>0.703</td>
+<td>0.703</td>
+<td>0.026</td>
+</tr>
+<tr>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+</tr>
+<tr>
+<td>enum_as_string_two_negative_status_and_order_type</td>
+<td>162.908</td>
+<td>162.488</td>
+<td>2.653</td>
+</tr>
+<tr>
+<td>enum_as_fk_two_negative_status_and_order_type</td>
+<td>0.945</td>
+<td>0.946</td>
+<td>0.006</td>
+</tr>
+<tr>
+<td>enum_as_int_two_negative_status_and_order_type</td>
+<td>0.651</td>
+<td>0.652</td>
+<td>0.005</td>
+</tr>
+<tr>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+<td>###</td>
+</tr>
+<tr>
+<td>enum_as_string_todo_in_progress_status_and_order_type</td>
+<td>0.764</td>
+<td>0.764</td>
+<td>0.006</td>
+</tr>
+<tr>
+<td>enum_as_fk_todo_in_progress_status_and_order_type</td>
+<td>0.945</td>
+<td>0.945</td>
+<td>0.008</td>
+</tr>
+<tr>
+<td>enum_as_int_todo_in_progress_status_and_order_type</td>
+<td>0.647</td>
+<td>0.647</td>
+<td>0.007</td>
+</tr>
+</tbody>
+</table>
+<h2>Conclusion</h2>
+<p>It is not as bad as I thought. Using indexes correctly for these simple queries helps a lot.</p>
+<p>But string based enums can be really slow (160x slower) when you can't do a complete index<br>
+lookup over the where clauses. For example:</p>
+<p><code>where status != 'FAILED' and status != 'COMPLETED' and order_type = 'ONLINE'</code>.</p>
+<p>Which can be fixed by using <code>status in ('TODO', 'IN_PROGRESS')</code> clauses so the index<br>
+is used again. Status can be TODO, IN_PROGRESS, COMPLETED, FAILED.</p>
+<p>It is not really that much slower when you use it for filtering, but it will increase<br>
+the size of your table and indexes.</p>
+<p>Database design is not data-oriented design. The ideas and techniques talked about by<br>
+Casey Muratori, Andrwe Kelley and Mike Acton are difficult to apply in a web backend<br>
+landscape dominated by frameworks and HTTP libraries.</p>
+<p>Yet their idea of storing the data in the smallest possible space does also<br>
+apply to database.</p>
+</div>
+      <div class="back-link">
+        <a href="/">← Back</a>
+      </div>
+    </div>
+    <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  </body>
+</html>
