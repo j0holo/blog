@@ -20,7 +20,9 @@ body {
 }
 
 .container {
-  margin: 40px 32%;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 1.5rem;
   blockquote {
     margin: 16px 0;
     padding: 0 1em;
