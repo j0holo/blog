@@ -8,6 +8,8 @@ module.exports = (eleventyConfig) => {
   // Required for Google Search Console
   eleventyConfig.addPassthroughCopy("googleff154aecaf87c68c.html");
   eleventyConfig.addPassthroughCopy("assets/images");
+  eleventyConfig.addPassthroughCopy("robots.txt");
+
   const options = {
     html: true,
     breaks: true,
