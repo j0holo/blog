@@ -5,6 +5,8 @@ module.exports = (eleventyConfig) => {
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPassthroughCopy("favicon.ico");
+  // Required for Google Search Console
+  eleventyConfig.addPassthroughCopy("googleff154aecaf87c68c.html");
   eleventyConfig.addPassthroughCopy("assets/images");
   const options = {
     html: true,
