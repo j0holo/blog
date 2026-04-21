@@ -350,7 +350,7 @@ This is a trade-off I&#39;m willing to make right now. But always keep that in m
 &lt;p&gt;Elasticsearch with a 4 node cluster is actually not a problem with small daily log ingestion of other systems. H264 decode hardware acceleration is nice, but I don&#39;t know if it works on Linux.&lt;/p&gt;
 &lt;p&gt;AMD-V support, it has it, but why bother with two slow cores. AES-NI? forget it.&lt;/p&gt;
 &lt;p&gt;Debian, FreeBSD and OpenBSD all work just fine. Hint, the BIOS is always password protected and defaults to: Fireport as password.&lt;/p&gt;
-&lt;p&gt;My upcomming project is to put them to work in a &lt;a href=&quot;https://min.io/&quot;&gt;Minio&lt;/a&gt; object storage cluster for Parquet formatted data.&lt;/p&gt;
+&lt;p&gt;My upcoming project is to put them to work in a &lt;a href=&quot;https://min.io/&quot;&gt;Minio&lt;/a&gt; object storage cluster for Parquet formatted data.&lt;/p&gt;
 
         &lt;hr/&gt; &lt;p&gt;&lt;a href=&#39;mailto:arpitbatra123@gmail.com?subject=Reply: The Wyse Z90DW in my homelab&#39;&gt;Reply via email&lt;/a&gt; &lt;/p&gt;
       </content>
@@ -492,7 +492,7 @@ export RUSTICL_ENABLE=radeonsi
 web application, but I have difficulty expressing it.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;When working with Hibernate, Eloquent and other ORMs I often see that enums are&lt;br /&gt;
 stored as their string representation instead of a smaller value like an integer.&lt;/p&gt;
-&lt;p&gt;Comming back to the ideas data-oriented design which focusses on batching large&lt;br /&gt;
+&lt;p&gt;Coming back to the ideas data-oriented design which focusses on batching large&lt;br /&gt;
 arrays of data that fits well into the CPU caches.&lt;/p&gt;
 &lt;p&gt;Storing strings instead of integers is not cache friendly at all.&lt;/p&gt;
 &lt;p&gt;I was thinking how I could apply this to my own work. I don&#39;t work on game engines,&lt;br /&gt;

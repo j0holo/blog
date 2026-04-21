@@ -11,7 +11,7 @@ title: 'Storing enums in a database'
 When working with Hibernate, Eloquent and other ORMs I often see that enums are 
 stored as their string representation instead of a smaller value like an integer.
 
-Comming back to the ideas data-oriented design which focusses on batching large 
+Coming back to the ideas data-oriented design which focusses on batching large 
 arrays of data that fits well into the CPU caches.
 
 Storing strings instead of integers is not cache friendly at all.

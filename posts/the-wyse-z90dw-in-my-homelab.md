@@ -57,4 +57,4 @@ AMD-V support, it has it, but why bother with two slow cores. AES-NI? forget it.
 
 Debian, FreeBSD and OpenBSD all work just fine. Hint, the BIOS is always password protected and defaults to: Fireport as password.
 
-My upcomming project is to put them to work in a [Minio](https://min.io/) object storage cluster for Parquet formatted data. 
+My upcoming project is to put them to work in a [Minio](https://min.io/) object storage cluster for Parquet formatted data. 
